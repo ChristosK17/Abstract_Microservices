@@ -4,7 +4,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 app = Flask(__name__)
 
 SWAGGER_URL = '/swagger'
-API_URL = '/static/swagger.json'
+API_URL = '/static/Abstract_Microservices_Swagger.json'
 CONFIG = {'app_name': "Abstract Microservices"}
 SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(SWAGGER_URL, API_URL, CONFIG)
 
