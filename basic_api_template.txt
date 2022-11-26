@@ -122,8 +122,8 @@ paths:
         '5XX':
           description: Unexpected error.
               
-  /sensor_reading:
-    description: 
+  /sensor_measurments:
+    description: Here u get/post sensor measurments
     get:
       tags: 
         - Sensor Reading
