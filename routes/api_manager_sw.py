@@ -13,13 +13,22 @@ sensors = api.namespace("sensors", description="Abstract Microservices sensors")
 measurements = api.namespace("measurements", description="Abstract Microservices measurements")
 
 sensor_info_model = api.model('Sensor Info', {
-    'sensorId': fields.Integer(required=True, description='Sensor Id'),
-    'vendorName': fields.String(required=True, description='Vendors Name')
+    'sensorId': fields.String(required=True, description='Sensor Id', example="0X6E7"),
+    'type': fields.String(required=True, description='Sensor type Enum->(Temperature, Humidity or Acoustic)', example="Temperature"),
+    'vendorName': fields.String(required=True, description='Vendors Name', example="Texas Instruments"),
+    'vendorEmail': fields.String(required=True, description='Vendors Email', example="texas@instruments.com"),
+    'description': fields.String(required=True, description='Description of sensor', example="This sensor is inside a house"),
+    'location': fields.String(required=True, description="{'latitude': <float>, 'longtitude': <float>}", example="{'latitude': 32.4574, 'longtitude': 20.6583}")
 })
 
+
 measurement_info_model = api.model('Measurement Info', {
-    'sensorId': fields.Integer(required=True, description='Sensor Id'),
-    'measurement': fields.Float(required=True, description='Measurement Name')
+    #'Id': fields.String(required=True, description='Measurement Id (Configured by the database)'),
+    'sensorId': fields.String(required=True, description='Sensor Id', example="0X6E7"),
+    'readingType': fields.String(required=True, description='Sensor type Enum->(Temperature, Humidity or Acoustic)', example="Temperature"),
+    'readingValue': fields.String(required=True, description="{'measurement': <float>, 'unit': <Celcius, Kelvin, Fahrenheit, AbsoluteM3, AbsoluteKg, Relative, Specific, UNIT1, UNIT2>}", example="Celcius"),
+    'readingDate': fields.Float(required=True, description="Timestamp (5134512.12512541)", example="5134512.12512541"),
+    'description': fields.String(required=True, description='Description of sensor', example="This sensor is inside a house")
 })
 
 def get_blueprint():
@@ -36,13 +45,19 @@ class SensorInfo(Resource):
     def get(self):
         '''Get sensor information'''
         return "To get all sensors info"
-    
-    # curl -X POST localhost:5000/sensors -H "Content-Type: application/json" -d "{\"hello\": \"motherfucker\"}"
+
     @sensors.expect(sensor_info_model)
     @sensors.marshal_with(sensor_info_model, code=201)
     def post(self):
         '''To add a new sensor in the system'''
-        return "To add a new sensor in the system " # + str(request.get_json(force=True))
+        try:
+            if not (api.payload["type"] == enums.Type.Temperature.name or api.payload["type"] == enums.Type.Humidity.name or api.payload["type"] == enums.Type.Acoustic.name):
+                api.abort(400)
+            if not validate_email(api.payload["vendorsEmail"]):
+                api.abort(400)
+        except Exception as e:
+            api.abort(400, custom=e)
+        return "To add a new sensor in the system "
 
 
 @measurements.route('/')
@@ -59,7 +74,7 @@ class SensorMeasurement(Resource):
     @sensors.marshal_with(measurement_info_model, code=201)
     def post(self):
         '''To add a new measurement in the system'''
-        return "To add a new measurement in the system " # + str(request.get_json(force=True))
+        return "To add a new measurement in the system "
 
 
 @measurements.route('/<string:type>')
@@ -75,7 +90,6 @@ class SensorMeasurementByType(Resource):
             api.abort(400)
 
 
-# http://127.0.0.1:5000/measurements/234.1234/1234.234
 @measurements.route('/<float:latitude>/<float:longtitude>')
 class SensorMeasurementByLocation(Resource):
 
@@ -90,7 +104,6 @@ class SensorMeasurementByLocation(Resource):
             api.abort(400)
 
 
-# http://127.0.0.1:5000/measurements/1669377978.513893
 @measurements.route('/<float:time_stamp>')
 class SensorMeasurementByTimestamp(Resource):
 
@@ -102,3 +115,5 @@ class SensorMeasurementByTimestamp(Resource):
             return "To get sensor measurements at {}".format(date)
         except ValueError:
             api.abort(400)
+
+# curl -X POST localhost:5000/sensors -H "Content-Type: application/json" -d "{\"hello\": \"motherfucker\"}"
