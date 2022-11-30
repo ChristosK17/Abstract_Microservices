@@ -16,8 +16,11 @@ def get_blueprint():
 def sensor_info():
     if request.method == 'GET':
         return "To get all sensors info"
+    # curl -X POST localhost:5000/sensors -H "Content-Type: application/json" -d "{\"hello\": \"motherfucker\"}"
     if request.method == 'POST':
-        return "To add a new sensor in the system"
+        data = request.get_json(force=True)
+        print(data)
+        return "To add a new sensor in the system " + str(data)
 
 
 @api_manager.route('/measurements', methods=['GET', 'POST'])
@@ -25,13 +28,16 @@ def sensor_measurment():
     if request.method == 'GET':
         return "To get all measurements"
     if request.method == 'POST':
-        return "To add a new measurment in the system"
+        data = request.get_json(force=True)
+        print(data)
+        return ("To add a new measurment in the system" + str(data) )
 
 
 @api_manager.route('/measurements/<string:type>', methods=['GET'])
 def sensor_measurment_by_type(type):
     if request.method == 'GET':
-        if type == enums.Type.Temperature or type == enums.Type.Humidity or type == enums.Type.Acoustic:
+        print(type)
+        if type == enums.Type.Temperature.name or type == enums.Type.Humidity.name or type == enums.Type.Acoustic.name:
             return "To get {} sensor measurements".format(type)
         else:
             abort(400)
