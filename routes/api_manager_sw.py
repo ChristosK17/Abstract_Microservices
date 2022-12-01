@@ -1,9 +1,11 @@
+import sys
 import uuid
 from datetime import datetime
 from flask import jsonify, abort, request, Blueprint
 from flask_restx import Api, Resource, fields, reqparse
 from validate_email import validate_email
 from enums import enums
+from api_key_protection import api_key_protection as protect
 
 api_manager = Blueprint('api_manager', __name__)
 
@@ -26,7 +28,7 @@ measurement_info_model = api.model('Measurement Info', {
     #'Id': fields.String(required=True, description='Measurement Id (Configured by the database)'),
     'sensorId': fields.String(required=True, description='Sensor Id', example="0X6E7"),
     'readingType': fields.String(required=True, description='Sensor type Enum->(Temperature, Humidity or Acoustic)', example="Temperature"),
-    'readingValue': fields.String(required=True, description="{'measurement': <float>, 'unit': <Celcius, Kelvin, Fahrenheit, AbsoluteM3, AbsoluteKg, Relative, Specific, UNIT1, UNIT2>}", example="Celcius"),
+    'readingValue': fields.String(required=True, description="{'measurement': <float>, 'unit': <Celcius, Kelvin, Fahrenheit, AbsoluteM3, AbsoluteKg, Relative, Specific, UNIT1, UNIT2>}", example="{'measurement': <float>, 'unit': 'Celcius'}"),
     'readingDate': fields.Float(required=True, description="Timestamp (5134512.12512541)", example="5134512.12512541"),
     'description': fields.String(required=True, description='Description of sensor', example="This sensor is inside a house")
 })
@@ -35,7 +37,7 @@ def get_blueprint():
     """Return the blueprint for the main app module"""
     return api_manager
 
-
+#@protect.require_appkey
 @sensors.route('/')
 class SensorInfo(Resource):
 
