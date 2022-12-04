@@ -1,7 +1,0 @@
-[04-Dec-22 15:07:12] ERROR - Exception occurred
-Traceback (most recent call last):
-  File "c:\Users\ckiokak\Documents\Abstract_Microservices\unified_exceptions.py", line 10, in function
-    return func(*args, **kwargs)
-  File "c:\Users\ckiokak\Documents\Abstract_Microservices\unified_exceptions.py", line 20, in dia
-    return a/b
-ZeroDivisionError: division by zero
