@@ -5,7 +5,7 @@ from flask import jsonify, abort, request, Blueprint
 from flask_restx import Api, Resource, fields, reqparse
 from validate_email import validate_email
 from enums import enums
-from api_key_protection import api_key_protection as protect
+#from api_key_protection import api_key_protection as protect
 
 api_manager = Blueprint('api_manager', __name__)
 
