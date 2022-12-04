@@ -1,0 +1,15 @@
+CREATE TYPE measurement_types AS ENUM ('Temperature', 'Humidity', 'Acoustic');
+CREATE TYPE UNITS AS ENUM ('Celcius', 'Kelvin', 'Fahrenheit', 'AbsoluteM3', 'AbsoluteKg', 'Relative', 'Specific', 'UNIT1', 'UNIT2');
+CREATE TYPE val AS (
+  value FLOAT, 
+  unit UNITS
+);
+
+CREATE TABLE IF NOT EXISTS sensors (
+  id SERIAL,
+  sensorId TEXT PRIMARY KEY, 
+  measurementType measurement_types NOT NULL, 
+  measurementValue val NOT NULL, 
+  measurementDate TIMESTAMP NOT NULL, 
+  description MEDIUMTEXT NOT NULL
+)
