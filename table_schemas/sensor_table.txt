@@ -1,0 +1,14 @@
+CREATE TYPE sensor_types AS ENUM ('Temperature', 'Humidity', 'Acoustic');
+CREATE TYPE loc AS (
+  latitude FLOAT, 
+  longitude FLOAT
+);
+
+CREATE TABLE IF NOT EXISTS sensors (
+  sensorId TEXT PRIMARY KEY, 
+  type sensor_types NOT NULL, 
+  vendorName TEXT, 
+  vendorEmail TEXT, 
+  description MEDIUMTEXT NOT NULL, 
+  location loc NOT NULL
+)
