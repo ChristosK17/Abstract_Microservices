@@ -3,7 +3,7 @@ from psycopg2 import OperationalError
 import logging
 import unified_exceptions as ue
 
-exception_handler = ue.UnifiedExceptions("logs.txt")
+exception_handler = ue.UnifiedExceptions("Logs/logs.txt")
 
 logging.basicConfig(level=logging.DEBUG, filename="DB_logs.txt", format='[%(asctime)s] %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
