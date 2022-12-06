@@ -24,7 +24,7 @@ To deploy this project run  ``` app.py```
 
 
 ## UI by Swagger
-![swagger.png](swagger.png)
+![swagger.png](static/swagger.png)
 
 Hosted Locally
 http://localhost:5000/swagger/
