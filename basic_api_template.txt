@@ -1,0 +1,209 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: Abstract_Microservices
+  description: REST API for an IoT platform
+  contact:
+    name: Kiokakis
+servers:
+  - description: Dummy server for now
+    url: http://am_api.com #https://virtserver.swaggerhub.com/CKIOKAK_1/Abstract_Microservices/1.0.0
+paths:
+  /sensor_info:
+    description: System’s sensor information
+    get:
+      tags: 
+        - Sensor Information
+      description: Operation to get sensor information
+      parameters: 
+        - in: query
+          name: sensorId
+          description: Provide the sensor id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: type
+          description: Provide the type of sensor
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: vendorName
+          description: Provide the vendors name
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: vendorEmail
+          description: Provide the vendors email
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: description
+          description: Provide the description of the sensor
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: location
+          description: Provide the location of the sensor
+          required: true
+          schema:
+            type: object
+            properties:
+              cityName:
+                type: string
+              cityCode:
+                type: integer
+                format: int32
+              latitude:
+                type: integer
+                format: int32
+              longtitude:
+                type: integer
+                format: int32
+              height:
+                type: integer
+                format: int32
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request.
+        '404':
+          description: Sensor was not found.
+        '5XX':
+          description: Unexpected error.
+                    
+    post:
+      description: Add a new sensor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sensorId:
+                  type: string
+                type:
+                  type: string
+                vendorName:
+                  type: string
+                vendorEmail:
+                  type: string
+                description:
+                  type: string
+                location:
+                  type: object
+                  properties:
+                    cityName:
+                      type: string
+                    cityCode:
+                      type: integer
+                      format: int32
+                    latitude:
+                      type: integer
+                      format: int32
+                    longtitude:
+                      type: integer
+                      format: int32
+                    height:
+                      type: integer
+                      format: int32
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request.
+        '404':
+          description: Sensor was not found.
+        '5XX':
+          description: Unexpected error.
+              
+  /sensor_measurments:
+    description: Here u get/post sensor measurments
+    get:
+      tags: 
+        - Sensor Reading
+      description: Operation to get sensor reading
+      parameters:
+        - in: query
+          name: Id
+          description: Provide the mesurment id
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: sensorId
+          description: Provide the sensor id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: readingType
+          description: Provide the measurment type
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: readingValue
+          description: Provide the measurment value
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: readingDate # timestamp provides both date and time of reading
+          description: Provide the date of measurment
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: description
+          description: Provide the description of the measurment
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request.
+        '404':
+          description: Sensor was not found.
+        '5XX':
+          description: Unexpected error.
+                    
+    post:
+      description: Add a new sensor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Id:
+                  type: integer
+                sensorId:
+                  type: string
+                readingType:
+                  type: string
+                readingValue:
+                  type: integer
+                readingDate:
+                  type: integer
+                description:
+                  type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request.
+        '404':
+          description: Sensor was not found.
+        '5XX':
+          description: Unexpected error.
