@@ -4,7 +4,7 @@ from datetime import datetime
 from validate_email import validate_email
 from enums.enums import Type, Unit
 from ORM import SensorORM, MeasurementORM
-import dummyDB
+import DBHandler
 import logging
 import unified_exceptions as ue
 
@@ -18,7 +18,7 @@ measurements_table_name = "measurements"
 sensors_schema = "(sensorId, type, vendorName, vendorEmail, description, location)"
 measurements_schema = "(sensorId, measurementType, measurementValue, measurementDate, description)"
 
-db = dummyDB.handler("abstractmicro", "table_schemas/sensor_datatype.txt", "table_schemas/measurement_datatype.txt", "table_schemas/sensor_table.txt", "table_schemas/measurement_table.txt")
+db = DBHandler.handler("abstractmicro", "table_schemas/sensor_datatype.txt", "table_schemas/measurement_datatype.txt", "table_schemas/sensor_table.txt", "table_schemas/measurement_table.txt")
 
 
 ############################### Set up api ###############################
