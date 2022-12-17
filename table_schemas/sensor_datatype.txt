@@ -1,0 +1,5 @@
+CREATE TYPE sensor_types AS ENUM ('Temperature', 'Humidity', 'Acoustic');
+CREATE TYPE loc AS (
+  latitude FLOAT, 
+  longitude FLOAT
+);

@@ -4,12 +4,3 @@ CREATE TYPE val AS (
   value FLOAT, 
   unit UNITS
 );
-
-CREATE TABLE IF NOT EXISTS sensors (
-  id SERIAL,
-  sensorId TEXT PRIMARY KEY, 
-  measurementType measurement_types NOT NULL, 
-  measurementValue val NOT NULL, 
-  measurementDate TIMESTAMP NOT NULL, 
-  description MEDIUMTEXT NOT NULL
-)

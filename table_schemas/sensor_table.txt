@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS sensors (
+  sensorId TEXT NOT NULL, 
+  type sensor_types NOT NULL, 
+  vendorName TEXT, 
+  vendorEmail TEXT, 
+  description TEXT NOT NULL, 
+  location loc NOT NULL
+)

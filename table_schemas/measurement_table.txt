@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS measurements (
+  id SERIAL,
+  sensorId TEXT NOT NULL, 
+  measurementType measurement_types NOT NULL, 
+  measurementValue val NOT NULL, 
+  measurementDate TIMESTAMP NOT NULL, 
+  description TEXT NOT NULL
+)
