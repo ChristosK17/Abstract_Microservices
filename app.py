@@ -7,6 +7,7 @@ from ORM import SensorORM, MeasurementORM
 import DBHandler
 import logging
 import unified_exceptions as ue
+from flask_cors import CORS 
 
 filename="Logs/logs.txt"
 exception_handler = ue.UnifiedExceptions(filename)
@@ -24,6 +25,8 @@ db = DBHandler.handler("abstractmicro", "table_schemas/sensor_datatype.txt", "ta
 ############################### Set up api ###############################
 
 app = Flask(__name__, template_folder='templates')
+
+CORS(app)
 
 api = Api(app, version="1.0", title="Abstract Microservices", description="Simple REST API",)
 
@@ -59,28 +62,37 @@ class SensorInfo(Resource):
     @exception_handler.handle
     @sensors.marshal_list_with(sensor_info_model)
     def get(self):
+
         '''Get sensor information'''
+
         exception_handler.debug("Get all sensor info")
-        data = db.get(sensors_table_name)
+        data = db.get(sensors_table_name, set_limit= False if request.args.get('limit')==None else True , limit=request.args.get('limit'))
+        
         return SensorORM.reconstruct(data)
 
     @sensors.expect(sensor_info_model)
     @sensors.marshal_with(sensor_info_model, code=201)
     def post(self):
+
         '''To add a new sensor in the system'''
+
         exception_handler.debug("Create a new sensor info")
         try:
             if not (api.payload["type"] == Type.Temperature.name or api.payload["type"] == Type.Humidity.name or api.payload["type"] == Type.Acoustic.name):
                 logging.warning("Bad request: Invalid type")
                 api.abort(400)
+            
             if not validate_email(api.payload["vendorEmail"]):
                 logging.warning("Bad request: Invalid email")
                 api.abort(400)
+            
             logging.debug("Inserting sensor")
             db.insert(sensors_table_name, sensors_schema, SensorORM.convert(api.payload))
+       
         except Exception as e:
             logging.warning(f"Bad request: {e}")
             api.abort(400, custom=e)
+        
         return f"Sensor added successfully!\n{api.payload}"
 
 
@@ -92,22 +104,28 @@ class SensorMeasurement(Resource):
     @exception_handler.handle
     @measurements.marshal_list_with(measurement_info_model)
     def get(self):
+
         '''To get all measurement info'''
 
         logging.debug("Get all measurements")
-        data = db.get(measurements_table_name)
+        data = db.get(sensors_table_name, set_limit= False if request.args.get('limit')==None else True , limit=request.args.get('limit'))
+        
         return MeasurementORM.reconstruct(data)
     
     @measurements.expect(measurement_info_model)
     @measurements.marshal_with(measurement_info_model, code=201)
     def post(self):
+
         '''To add a new measurement in the system'''
+
         try:
             exception_handler.debug("Inserting measurement data from post request")
             db.insert(measurements_table_name, measurements_schema, MeasurementORM.convert(api.payload))
+
         except Exception as e:
             logging.warning(f"Bad request: {e}")
             api.abort(400, custom=e)
+
         return f"Sensor added successfully!\n{api.payload}"
 
 
@@ -116,12 +134,16 @@ class SensorMeasurementByType(Resource):
     
     @measurements.marshal_list_with(measurement_info_model)
     def get(self, type):
+
         '''Get sensor measurements by sensor type'''
+
         if not (type == Type.Temperature.name or type == Type.Humidity.name or type == Type.Acoustic.name):
             logging.warning("Bad request")
             api.abort(400)
+
         logging.debug(f"Get all measurements by {type}")
-        data = db.get(measurements_table_name, get_by="measurementType", value=type)
+        data = db.get(measurements_table_name, get_by="measurementType", value=type, set_limit = False if request.args.get('limit')==None else True , limit=request.args.get('limit'))
+        
         return MeasurementORM.reconstruct(data)
 
 
@@ -130,12 +152,15 @@ class SensorMeasurementByLocation(Resource):
 
     @measurements.marshal_list_with(measurement_info_model)
     def get(self, latitude, longitude):
+
         '''To get sensor measurements at lan, long'''
+
         try:
             latitude = float(latitude)
             longitude  = float(longitude)
             logging.debug(f"Get all measurements by lat: {latitude}, lon: {longitude}")
             return "To get sensor measurements at {}, {}".format(latitude, longitude)
+
         except ValueError as e:
             logging.warning(f"Bad request: {e}")
             api.abort(400)
@@ -146,11 +171,14 @@ class SensorMeasurementByTimestamp(Resource):
 
     @measurements.marshal_list_with(measurement_info_model)
     def get(self, time_stamp):
+
         '''To get sensor measurements at a date/time'''
+
         try:
             logging.debug(f"Get all measurements by {time_stamp}")
-            data = db.get(measurements_table_name, get_by="measurementDate", value=str(datetime.fromtimestamp(time_stamp)))
+            data = db.get(measurements_table_name, get_by="measurementDate", value=str(datetime.fromtimestamp(time_stamp)), set_limit= False if request.args.get('limit')==None else True , limit=request.args.get('limit'))
             return MeasurementORM.reconstruct(data)
+
         except ValueError as e:
             logging.warning(f"Bad request: {e}")
             api.abort(400)

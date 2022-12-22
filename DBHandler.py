@@ -6,6 +6,7 @@ exception_handler = ue.UnifiedExceptions(filename)
 
 class handler:
     def __init__(self, db_name: str, *schema: str) -> None:
+
         """
         Try to connect to database with db_name. If it exists, we have a successfull connection. 
         If it does not exist, the programm connects to the default postgres DB and creates a DB with name db_name
@@ -17,11 +18,13 @@ class handler:
             self.connection = self.create_connection(db_name=db_name, db_user="postgres", db_password="minda", db_host="127.0.0.1", db_port="5432")
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
+        
         except Exception as e:
             try:
                 self.create_db(db_name)
                 self.connection = self.create_connection(db_name=db_name, db_user="postgres", db_password="minda", db_host="127.0.0.1", db_port="5432")
                 self.cursor = self.connection.cursor()
+            
             except Exception as e:
                 exception_handler.error(f"Exception occurred {e}")
         
@@ -29,6 +32,7 @@ class handler:
             for query in schema:
                 exception_handler.debug("In for loop from "+str(schema)+ " creating "+str(query))
                 self.create_schema(query)
+        
         except psycopg2.errors.DuplicateObject as e:
             exception_handler.error(f"Exception occurred {e}")
 
