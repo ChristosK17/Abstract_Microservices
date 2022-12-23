@@ -7,11 +7,13 @@ from ORM import SensorORM, MeasurementORM
 import DBHandler
 import unified_exceptions as ue
 from flask_cors import CORS 
+import sys
 
 
 ######################## Set up logging system ##########################
 
 filename="Logs/logs.txt"
+header = sys.argv[0].split("/")[-1]
 exception_handler = ue.UnifiedExceptions(filename)
 
 
@@ -70,8 +72,8 @@ class SensorInfo(Resource):
     def get(self):
 
         '''Get sensor information'''
-
-        exception_handler.debug(f"{__file__}\tGet all sensor info")
+        
+        exception_handler.debug(f"{header}\tGet all sensor info")
         data = db.get(sensors_table_name, set_limit= False if request.args.get('limit')==None else True , limit=request.args.get('limit'))
         
         return SensorORM.reconstruct(data)
@@ -82,21 +84,21 @@ class SensorInfo(Resource):
 
         '''To add a new sensor in the system'''
 
-        exception_handler.debug(f"{__file__}\tCreate a new sensor info")
+        exception_handler.debug(f"{header}\tCreate a new sensor info")
         try:
             if not (api.payload["type"] == Type.Temperature.name or api.payload["type"] == Type.Humidity.name or api.payload["type"] == Type.Acoustic.name):
                 exception_handler.warning("Bad request: Invalid type")
                 api.abort(400)
             
             if not validate_email(api.payload["vendorEmail"]):
-                exception_handler.warning(f"{__file__}\tBad request: Invalid email")
+                exception_handler.warning(f"{header}\tBad request: Invalid email")
                 api.abort(400)
             
-            exception_handler.debug("f{__file__}\tInserting sensor")
+            exception_handler.debug("f{header}\tInserting sensor")
             db.insert(sensors_table_name, sensors_schema, SensorORM.convert(api.payload))
        
         except Exception as e:
-            exception_handler.warning(f"{__file__}\tBad request: {e}")
+            exception_handler.warning(f"{header}\tBad request: {e}")
             api.abort(400, custom=e)
         
         return f"Sensor added successfully!\n{api.payload}"
@@ -113,7 +115,7 @@ class SensorMeasurement(Resource):
 
         '''To get all measurement info'''
 
-        exception_handler.debug(f"{__file__}\tGet all measurements")
+        exception_handler.debug(f"{header}\tGet all measurements")
         data = db.get(sensors_table_name, set_limit= False if request.args.get('limit')==None else True , limit=request.args.get('limit'))
         
         return MeasurementORM.reconstruct(data)
@@ -125,11 +127,11 @@ class SensorMeasurement(Resource):
         '''To add a new measurement in the system'''
 
         try:
-            exception_handler.debug(f"{__file__}\tInserting measurement data from post request")
+            exception_handler.debug(f"{header}\tInserting measurement data from post request")
             db.insert(measurements_table_name, measurements_schema, MeasurementORM.convert(api.payload))
 
         except Exception as e:
-            exception_handler.warning(f"{__file__}\tBad request: {e}")
+            exception_handler.warning(f"{header}\tBad request: {e}")
             api.abort(400, custom=e)
 
         return f"Sensor added successfully!\n{api.payload}"
@@ -144,10 +146,10 @@ class SensorMeasurementByType(Resource):
         '''Get sensor measurements by sensor type'''
 
         if not (type == Type.Temperature.name or type == Type.Humidity.name or type == Type.Acoustic.name):
-            exception_handler.warning(f"{__file__}\tBad request")
+            exception_handler.warning(f"{header}\tBad request")
             api.abort(400)
 
-        exception_handler.debug(f"{__file__}\tGet all measurements by {type}")
+        exception_handler.debug(f"{header}\tGet all measurements by {type}")
         data = db.get(measurements_table_name, get_by="measurementType", value=type, set_limit = False if request.args.get('limit')==None else True , limit=request.args.get('limit'))
         
         return MeasurementORM.reconstruct(data)
@@ -164,11 +166,11 @@ class SensorMeasurementByLocation(Resource):
         try:
             latitude = float(latitude)
             longitude  = float(longitude)
-            exception_handler.debug(f"{__file__}\tGet all measurements by lat: {latitude}, lon: {longitude}")
+            exception_handler.debug(f"{header}\tGet all measurements by lat: {latitude}, lon: {longitude}")
             return "To get sensor measurements at {}, {}".format(latitude, longitude)
 
         except ValueError as e:
-            exception_handler.warning(f"{__file__}\tBad request: {e}")
+            exception_handler.warning(f"{header}\tBad request: {e}")
             api.abort(400)
 
 
@@ -181,12 +183,12 @@ class SensorMeasurementByTimestamp(Resource):
         '''To get sensor measurements at a date/time'''
 
         try:
-            exception_handler.debug(f"{__file__}\tGet all measurements by {time_stamp}")
+            exception_handler.debug(f"{header}\tGet all measurements by {time_stamp}")
             data = db.get(measurements_table_name, get_by="measurementDate", value=str(datetime.fromtimestamp(time_stamp)), set_limit= False if request.args.get('limit')==None else True , limit=request.args.get('limit'))
             return MeasurementORM.reconstruct(data)
 
         except ValueError as e:
-            exception_handler.warning(f"{__file__}\tBad request: {e}")
+            exception_handler.warning(f"{header}\tBad request: {e}")
             api.abort(400)
 
 if __name__ == "__main__":
