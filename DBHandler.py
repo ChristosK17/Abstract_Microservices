@@ -1,5 +1,9 @@
 import psycopg2
 import unified_exceptions as ue
+from dotenv import load_dotenv
+import os
+
+load_dotenv() # Python lib to load .env file with credentials
 
 filename="Logs/logs.txt"
 exception_handler = ue.UnifiedExceptions(filename)
@@ -15,14 +19,14 @@ class handler:
         """
 
         try:
-            self.connection = self.create_connection(db_name=db_name, db_user="postgres", db_password="minda", db_host="127.0.0.1", db_port="5432")
+            self.connection = self.create_connection(db_name=db_name, db_user=os.getenv('USERNAME'), db_password=os.getenv('PASSWORD'), db_host="127.0.0.1", db_port="5432")
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
         
         except Exception as e:
             try:
                 self.create_db(db_name)
-                self.connection = self.create_connection(db_name=db_name, db_user="postgres", db_password="minda", db_host="127.0.0.1", db_port="5432")
+                self.connection = self.create_connection(db_name=db_name, db_user=os.getenv('USERNAME'), db_password=os.getenv('PASSWORD'), db_host="127.0.0.1", db_port="5432")
                 self.cursor = self.connection.cursor()
             
             except Exception as e:
